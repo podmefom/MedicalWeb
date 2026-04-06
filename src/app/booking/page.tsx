@@ -11,9 +11,9 @@ export default function BookingPage() {
   
   // Состояния для формы
   const [formData, setFormData] = useState({
-    doctorId: '1', // По умолчанию первый (позже заменим на динамику)
+    doctorId: '1',
     patientName: '',
-    phone: '',
+    patientPhone: '',
     date: '',
     slot: ''
   });
@@ -25,7 +25,7 @@ export default function BookingPage() {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/booking', {
+      const response = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -106,7 +106,7 @@ export default function BookingPage() {
               <input 
                 placeholder="НОМЕР ТЕЛЕФОНА"
                 className="w-full p-4 border border-slate-200 focus:border-blue-600 outline-none font-bold"
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => setFormData({...formData, patientPhone: e.target.value})}
                 required
               />
               <div className="flex gap-4">
