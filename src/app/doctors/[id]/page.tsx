@@ -1,14 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { Award, Clock, Star, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-
-const prisma = new PrismaClient();
 
 export default async function DoctorProfile({ params }: { params: { id: string } }) {
   // Получаем данные конкретного врача из БД
   const doctor = await prisma.doctor.findUnique({
     where: { id: params.id },
+    include: {
+      user: true,
+    },
   });
 
   if (!doctor) notFound();
@@ -45,7 +46,7 @@ export default async function DoctorProfile({ params }: { params: { id: string }
             {doctor.specialty}
           </div>
           <h1 className="text-5xl font-black tracking-tighter text-slate-900 mb-6 uppercase">
-            {doctor.name}
+            {doctor.user.name}
           </h1>
           <p className="text-lg text-slate-500 leading-relaxed mb-10 font-medium">
             {doctor.bio}. Специалист мирового уровня, использующий протоколы доказательной медицины и передовые технологические решения нашего центра.

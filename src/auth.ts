@@ -1,10 +1,10 @@
-import NextAuth, { type NextAuthConfig } from 'next-auth';
+import NextAuth, { type NextAuthOptions, type Session } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import prisma from '@/lib/prisma';
 import * as bcrypt from 'bcryptjs';
 
-export const config = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -45,15 +45,15 @@ export const config = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
-        token.role = user.role;
+        token.role = user.role || 'PATIENT';
         token.id = user.id;
       }
       return token;
     },
-    async session({ session, token }) {
-      if (session.user) {
+    async session({ session, token }: any) {
+      if (session && session.user) {
         (session.user as any).role = token.role;
         (session.user as any).id = token.id;
       }
@@ -64,6 +64,7 @@ export const config = {
     signIn: '/login',
     error: '/login',
   },
-} satisfies NextAuthConfig;
+};
 
-export const { handlers, auth, signIn, signOut } = NextAuth(config);
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };

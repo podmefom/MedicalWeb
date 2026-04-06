@@ -10,20 +10,35 @@ export async function GET(request: Request) {
       where: {
         ...(specialty && { specialty }),
       },
-      select: {
-        id: true,
-        name: true,
-        specialty: true,
-        experience: true,
-        bio: true,
-        image: true,
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            phone: true,
+          },
+        },
       },
       orderBy: {
-        name: 'asc',
+        user: {
+          name: 'asc',
+        },
       },
     });
 
-    return NextResponse.json(doctors);
+    // Transform to flatten the user data
+    const formattedDoctors = doctors.map((doctor) => ({
+      id: doctor.id,
+      name: doctor.user.name,
+      email: doctor.user.email,
+      phone: doctor.user.phone,
+      specialty: doctor.specialty,
+      experience: doctor.experience,
+      bio: doctor.bio,
+      image: doctor.image,
+    }));
+
+    return NextResponse.json(formattedDoctors);
   } catch (error) {
     console.error('DOCTORS_GET_ERROR:', error);
     return NextResponse.json(
