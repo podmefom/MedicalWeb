@@ -82,6 +82,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('VALIDATION_ERROR:', error.issues);
       return NextResponse.json(
         {
           error: 'Ошибка валидации',
@@ -96,7 +97,7 @@ export async function POST(request: Request) {
 
     console.error('APPOINTMENTS_POST_ERROR:', error);
     return NextResponse.json(
-      { error: 'Ошибка при создании записи' },
+      { error: 'Ошибка при создании записи', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

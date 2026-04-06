@@ -37,7 +37,11 @@ export default function BookingPage() {
         toast.success('ЗАПИСЬ_СОЗДАНА', { description: 'Ждем вас в клинике!' });
         setStep(3);
       } else {
-        toast.error('ОШИБКА', { description: data.error || 'Что-то пошло не так' });
+        const errorMsg = data.details 
+          ? data.details.map((d: any) => `${d.field}: ${d.message}`).join(', ')
+          : data.error || 'Что-то пошло не так';
+        toast.error('ОШИБКА', { description: errorMsg });
+        console.error('API Error:', data);
       }
     } catch (err) {
       toast.error('ОШИБКА_СЕТИ');
