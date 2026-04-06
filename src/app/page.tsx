@@ -12,17 +12,15 @@ export default function HomePage() {
       y: 0, 
       transition: { 
         duration: 0.8, 
-        ease: [0.16, 1, 0.3, 1] as const // Добавили as const
+        ease: [0.16, 1, 0.3, 1] as const 
       } 
     }
   };
 
   return (
     <main className="relative min-h-screen bg-white overflow-hidden">
-      {/* Технологичный фон: сетка и градиенты */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
       
-      {/* ГЕРОЙ-СЕКЦИЯ */}
       <section className="relative pt-48 pb-24 px-6 max-w-7xl mx-auto">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} className="max-w-4xl">
           <div className="inline-flex items-center space-x-2 px-3 py-1 mb-8 bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black tracking-[0.2em] uppercase">
@@ -37,7 +35,7 @@ export default function HomePage() {
           </h1>
 
           <p className="text-lg md:text-xl text-slate-500 font-medium max-w-2xl mb-12 leading-relaxed">
-            Интегрированная платформа превентивной медицины. Нейросетевая диагностика, мгновенная запись и полная безопасность ваших данных.
+            Интегрированная платформа превентивной медицины. Нейросетевая диагностика, мгновенная запись и полная безопасность данных.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -52,7 +50,6 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* СЕТКА ПРЕИМУЩЕСТВ */}
       <section className="relative border-y border-slate-100 bg-slate-50/50">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 divide-x divide-slate-100">
           {[
@@ -64,23 +61,6 @@ export default function HomePage() {
               <div className="text-blue-600 mb-6 group-hover:scale-110 transition-transform duration-500">{item.icon}</div>
               <h3 className="font-bold text-slate-900 mb-2 tracking-tight uppercase">{item.title}</h3>
               <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ТЕХНО-СТАТИСТИКА */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-          {[
-            { label: "Активных врачей", val: "450+" },
-            { label: "Точность ИИ", val: "99.8%" },
-            { label: "Пациентов", val: "12K" },
-            { label: "Филиалов", val: "24" }
-          ].map((stat, i) => (
-            <div key={i}>
-              <div className="text-4xl font-black text-slate-900 mb-1">{stat.val}</div>
-              <div className="text-[10px] font-black text-slate-400 tracking-widest uppercase">{stat.label}</div>
             </div>
           ))}
         </div>

@@ -3,25 +3,37 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // Или sqlite для тестов
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 model Doctor {
-  id           String    @id @default(cuid())
+  id           String        @id @default(cuid())
   name         String
   specialty    String
   experience   Int
   bio          String
-  image        String
+  image        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   appointments Appointment[]
+
+  @@index([specialty])
 }
 
 model Appointment {
-  id        String   @id @default(cuid())
-  patient   String
-  date      DateTime
-  doctorId  String
-  doctor    Doctor   @relation(fields: [doctorId], references: [id])
-  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  id            String   @id @default(cuid())
+  patientName   String
+  patientPhone  String
+  patientEmail  String?
+  date          DateTime
+  doctorId      String
+  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  status        String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([doctorId])
+  @@index([date])
+  @@index([status])
 }

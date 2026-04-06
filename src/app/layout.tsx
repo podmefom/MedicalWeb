@@ -4,7 +4,6 @@ import "./globals.css";
 import Link from "next/link";
 import { Toaster } from 'sonner';
 
-
 const inter = Inter({ subsets: ["latin", "cyrillic"], variable: "--font-inter" });
 const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
 
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className="scroll-smooth">
+    <html lang="ru" className="scroll-smooth" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${inter.variable} ${space.variable} antialiased bg-white text-slate-900`}>
         <nav className="fixed top-0 w-full z-[100] border-b border-slate-100 bg-white/80 backdrop-blur-md">
           <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -34,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </nav>
         {children}
+        <Toaster position="bottom-right" richColors />
       </body>
     </html>
   );
