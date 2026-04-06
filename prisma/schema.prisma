@@ -6,9 +6,32 @@ datasource db {
   provider = "sqlite"
 }
 
+enum UserRole {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String
+  password      String
+  phone         String?
+  role          UserRole  @default(PATIENT)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Связи
+  appointments  Appointment[] @relation("PatientAppointments")
+  doctorProfile Doctor?
+  adminActions  AdminLog[]
+}
+
 model Doctor {
   id           String        @id @default(cuid())
-  name         String
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   specialty    String
   experience   Int
   bio          String
@@ -22,7 +45,8 @@ model Doctor {
 
 model Appointment {
   id            String   @id @default(cuid())
-  patientName   String
+  patientId     String
+  patient       User     @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
   patientPhone  String
   patientEmail  String?
   date          DateTime
@@ -33,7 +57,19 @@ model Appointment {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  @@index([patientId])
   @@index([doctorId])
   @@index([date])
   @@index([status])
+}
+
+model AdminLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String   // 'CREATE_DOCTOR', 'DELETE_APPOINTMENT', etc
+  metadata  String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
