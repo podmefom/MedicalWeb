@@ -24,6 +24,8 @@ export default function BookingPage() {
     e.preventDefault();
     setLoading(true);
 
+    console.log('Отправляю данные:', formData);
+
     try {
       const response = await fetch('/api/appointments', {
         method: 'POST',
@@ -32,6 +34,7 @@ export default function BookingPage() {
       });
 
       const data = await response.json();
+      console.log('Ответ от API:', data, 'Статус:', response.status);
 
       if (response.ok) {
         toast.success('ЗАПИСЬ_СОЗДАНА', { description: 'Ждем вас в клинике!' });
@@ -44,6 +47,7 @@ export default function BookingPage() {
         console.error('API Error:', data);
       }
     } catch (err) {
+      console.error('Ошибка сети:', err);
       toast.error('ОШИБКА_СЕТИ');
     } finally {
       setLoading(false);
