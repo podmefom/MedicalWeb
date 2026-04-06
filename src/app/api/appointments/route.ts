@@ -1,21 +1,55 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 import prisma from '@/lib/prisma';
 import { createAppointmentSchema } from '@/lib/validation';
 import { z } from 'zod';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Не авторизован' },
+        { status: 401 }
+      );
+    }
+
     const url = new URL(request.url);
     const doctorId = url.searchParams.get('doctorId');
     const status = url.searchParams.get('status');
+    const userId = token.id as string;
+    const userRole = token.role as string;
+
+    // Получаем записи в зависимости от роли пользователя
+    let whereClause: any = {};
+
+    if (userRole === 'PATIENT') {
+      // Пациенты видят только свои записи
+      whereClause.patientId = userId;
+    } else if (userRole === 'DOCTOR') {
+      // Врачи видят записи к ним
+      const doctor = await prisma.doctor.findFirst({
+        where: { userId },
+      });
+      if (doctor) {
+        whereClause.doctorId = doctor.id;
+      }
+    }
+    // ADMIN видит все записи
+
+    if (doctorId) whereClause.doctorId = doctorId;
+    if (status) whereClause.status = status;
 
     const appointments = await prisma.appointment.findMany({
-      where: {
-        ...(doctorId && { doctorId }),
-        ...(status && { status }),
-      },
+      where: whereClause,
       include: {
-        doctor: true,
+        doctor: {
+          include: {
+            user: true,
+          },
+        },
+        patient: true,
       },
       orderBy: {
         date: 'asc',
@@ -32,8 +66,17 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Не авторизован' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
 
     // Валидация через Zod
@@ -64,15 +107,20 @@ export async function POST(request: Request) {
 
     const appointment = await prisma.appointment.create({
       data: {
-        patientName: validated.patientName,
+        patientId: token.id as string,
         patientPhone: validated.patientPhone,
         patientEmail: validated.patientEmail,
         date: appointmentDate,
         doctorId: validated.doctorId,
         status: 'PENDING',
-      } as any,
+      },
       include: {
-        doctor: true,
+        doctor: {
+          include: {
+            user: true,
+          },
+        },
+        patient: true,
       },
     });
 
