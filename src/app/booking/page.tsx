@@ -40,9 +40,10 @@ export default function BookingPage() {
       });
 
       if (response.ok) {
-        setStep(4); // Успех
-      } else {
-        alert('ОШИБКА_ПРИ_ЗАПИСИ. ПРОВЕРЬТЕ_ДАННЫЕ.');
+        toast.success('ЗАПИСЬ_ПОДТВЕРЖДЕНА', {
+          description: 'Мы отправили детали в ваш личный кабинет.',
+        });
+        setStep(4);
       }
     } catch (err) {
       console.error(err);

@@ -1,4 +1,5 @@
-import { ShieldAlert, Zap, HeartPulse, BrainCircuit } from "lucide-react";
+import { ShieldAlert, Zap, HeartPulse, BrainCircuit, Fingerprint } from "lucide-react"; // Добавили Fingerprint
+
 
 const SERVICES = [
   { title: "НЕЙРО-ДИАГНОСТИКА", desc: "Анализ МРТ с помощью ИИ для выявления патологий на ранних стадиях.", icon: <BrainCircuit className="text-blue-600" /> },
