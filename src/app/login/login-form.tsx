@@ -30,8 +30,6 @@ export default function LoginForm() {
       } else if (result?.ok) {
         toast.success('Добро пожаловать!');
         const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-        // Небольшая задержка для инициализации сессии
-        await new Promise(resolve => setTimeout(resolve, 100));
         router.push(callbackUrl);
       }
     } catch (err) {

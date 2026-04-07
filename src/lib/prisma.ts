@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
-import Database from 'better-sqlite3';
 import path from 'path';
 
 declare global {
@@ -12,14 +11,13 @@ const prismaClientSingleton = () => {
   let dbPath = process.env.DATABASE_URL || './dev.db';
   
   // Удаляем префикс "file:" если есть
-  if (dbPath.startsWith('file:')) {
+  if (dbPath && typeof dbPath === 'string' && dbPath.startsWith('file:')) {
     dbPath = dbPath.substring(5);
   }
   
   const resolvedPath = path.isAbsolute(dbPath) ? dbPath : path.resolve(process.cwd(), dbPath);
   
-  const db = new Database(resolvedPath);
-  const adapter = new PrismaBetterSqlite3(db);
+  const adapter = new PrismaBetterSqlite3({ url: `file:${resolvedPath}` });
 
   return new PrismaClient({
     adapter,

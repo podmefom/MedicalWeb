@@ -30,13 +30,10 @@ export async function GET(request: NextRequest) {
       // Пациенты видят только свои записи
       whereClause.patientId = userId;
     } else if (userRole === 'DOCTOR') {
-      // Врачи видят записи к ним
-      const doctor = await prisma.doctor.findFirst({
-        where: { userId },
-      });
-      if (doctor) {
-        whereClause.doctorId = doctor.id;
-      }
+      // Врачи видят записи к ним - используем доступ через doctor.userId вместо отдельного запроса
+      whereClause.doctor = {
+        userId,
+      };
     }
     // ADMIN видит все записи
 
@@ -47,15 +44,28 @@ export async function GET(request: NextRequest) {
       where: whereClause,
       include: {
         doctor: {
-          include: {
-            user: true,
+          select: {
+            id: true,
+            specialty: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
-        patient: true,
+        patient: {
+          select: {
+            id: true,
+          },
+        },
       },
       orderBy: {
         date: 'asc',
       },
+      take: 100, // Ограничение на 100 записей для производительности
     });
 
     return NextResponse.json(appointments);
