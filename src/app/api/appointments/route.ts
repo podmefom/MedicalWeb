@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 import { createAppointmentSchema } from '@/lib/validation';
 import { z } from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });

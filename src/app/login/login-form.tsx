@@ -26,14 +26,16 @@ export default function LoginForm() {
 
       if (result?.error) {
         toast.error('Ошибка входа', { description: result.error });
+        setLoading(false);
       } else if (result?.ok) {
         toast.success('Добро пожаловать!');
         const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+        // Небольшая задержка для инициализации сессии
+        await new Promise(resolve => setTimeout(resolve, 100));
         router.push(callbackUrl);
       }
     } catch (err) {
       toast.error('Ошибка сети');
-    } finally {
       setLoading(false);
     }
   };
@@ -98,15 +100,18 @@ export default function LoginForm() {
                 <p className="text-slate-600">123456</p>
               </div>
               <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                <p className="font-bold text-slate-700">Врач</p>
-                <p className="text-slate-600">volkov@clinic.com</p>
-                <p className="text-slate-600">doctor123</p>
-              </div>
-              <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                <p className="font-bold text-slate-700">Админ</p>
+                <p className="font-bold text-slate-700">Администратор</p>
                 <p className="text-slate-600">admin@clinic.com</p>
                 <p className="text-slate-600">admin123</p>
               </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-slate-200">
+              <p className="text-xs text-slate-500 text-center mb-3">
+                Нет аккаунта?{' '}
+                <a href="/register" className="text-blue-600 font-black hover:text-blue-700 underline">
+                  Создать аккаунт
+                </a>
+              </p>
             </div>
           </div>
         </div>
