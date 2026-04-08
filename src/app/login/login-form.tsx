@@ -10,29 +10,35 @@ export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('ivan@example.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      console.log('[LOGIN_FORM] Попытка входа:', email);
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
       });
 
+      console.log('[LOGIN_FORM] Результат signIn:', result);
+
       if (result?.error) {
+        console.log('[LOGIN_FORM] Ошибка:', result.error);
         toast.error('Ошибка входа', { description: result.error });
         setLoading(false);
       } else if (result?.ok) {
+        console.log('[LOGIN_FORM] Успешный вход');
         toast.success('Добро пожаловать!');
         const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
         router.push(callbackUrl);
       }
     } catch (err) {
+      console.error('[LOGIN_FORM] Ошибка сети:', err);
       toast.error('Ошибка сети');
       setLoading(false);
     }
@@ -61,6 +67,7 @@ export default function LoginForm() {
                 placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
                 className="w-full px-4 py-3 border border-slate-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none rounded"
                 required
               />
@@ -75,6 +82,7 @@ export default function LoginForm() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 className="w-full px-4 py-3 border border-slate-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none rounded"
                 required
               />
@@ -89,28 +97,11 @@ export default function LoginForm() {
             </button>
           </form>
 
-          <div className="border-t border-slate-200 pt-6">
-            <p className="text-xs text-slate-500 mb-4">Тестовые учетные записи:</p>
-            <div className="space-y-3 text-xs">
-              <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                <p className="font-bold text-slate-700">Пациент</p>
-                <p className="text-slate-600">ivan@example.com</p>
-                <p className="text-slate-600">123456</p>
-              </div>
-              <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                <p className="font-bold text-slate-700">Администратор</p>
-                <p className="text-slate-600">admin@clinic.com</p>
-                <p className="text-slate-600">admin123</p>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-slate-200">
-              <p className="text-xs text-slate-500 text-center mb-3">
-                Нет аккаунта?{' '}
-                <a href="/register" className="text-blue-600 font-black hover:text-blue-700 underline">
-                  Создать аккаунт
-                </a>
-              </p>
-            </div>
+          <div className="text-center text-sm text-slate-600">
+            Нет аккаунта? 
+            <a href="/register" className="text-blue-600 font-semibold hover:text-blue-700 ml-1">
+              Зарегистрируйтесь
+            </a>
           </div>
         </div>
       </div>

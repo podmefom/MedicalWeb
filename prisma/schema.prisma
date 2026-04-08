@@ -1,38 +1,30 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-enum UserRole {
-  PATIENT
-  DOCTOR
-  ADMIN
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String        @id @default(cuid())
+  email         String        @unique
   name          String
   password      String
   phone         String?
-  role          UserRole  @default(PATIENT)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  
-  // Связи
+  role          String        @default("PATIENT")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  adminActions  AdminLog[]
   appointments  Appointment[] @relation("PatientAppointments")
   doctorProfile Doctor?
-  adminActions  AdminLog[]
 }
 
 model Doctor {
   id           String        @id @default(cuid())
   userId       String        @unique
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   specialty    String
   experience   Int
   bio          String
@@ -40,23 +32,24 @@ model Doctor {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   appointments Appointment[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([specialty])
 }
 
 model Appointment {
-  id            String   @id @default(cuid())
-  patientId     String
-  patient       User     @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
-  patientPhone  String
-  patientEmail  String?
-  date          DateTime
-  doctorId      String
-  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  status        String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED, COMPLETED
-  notes         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String   @id @default(cuid())
+  patientId    String
+  patientPhone String
+  patientEmail String?
+  date         DateTime
+  doctorId     String
+  status       String   @default("PENDING")
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  doctor       Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patient      User     @relation("PatientAppointments", fields: [patientId], references: [id], onDelete: Cascade)
 
   @@index([patientId])
   @@index([doctorId])
@@ -67,10 +60,10 @@ model Appointment {
 model AdminLog {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  action    String   // 'CREATE_DOCTOR', 'DELETE_APPOINTMENT', etc
+  action    String
   metadata  String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

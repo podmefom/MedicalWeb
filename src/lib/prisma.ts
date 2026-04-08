@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 
 declare global {
@@ -6,14 +5,10 @@ declare global {
 }
 
 const prismaClientSingleton = () => {
-  const connectionString = process.env.DATABASE_URL;
-  
-  if (!connectionString) {
-    throw new Error('DATABASE_URL environment variable is not set');
-  }
-
+  console.log('[PRISMA] Инициализация PrismaClient');
+  console.log('[PRISMA] DATABASE_URL:', process.env.DATABASE_URL);
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    log: process.env.NODE_ENV === 'development' ? ['error', 'warn', 'info'] : ['error'],
   });
 };
 

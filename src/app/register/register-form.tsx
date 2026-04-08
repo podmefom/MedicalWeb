@@ -107,6 +107,7 @@ export default function RegisterForm() {
                 placeholder="Иван Петров"
                 value={formData.name}
                 onChange={handleChange}
+                autoComplete="name"
                 className="w-full px-4 py-3 border border-slate-200 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded"
                 required
               />
@@ -122,6 +123,7 @@ export default function RegisterForm() {
                 placeholder="your@email.com"
                 value={formData.email}
                 onChange={handleChange}
+                autoComplete="email"
                 className="w-full px-4 py-3 border border-slate-200 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded"
                 required
               />
@@ -137,6 +139,7 @@ export default function RegisterForm() {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
+                autoComplete="new-password"
                 className="w-full px-4 py-3 border border-slate-200 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded"
                 required
               />
@@ -151,6 +154,7 @@ export default function RegisterForm() {
                 name="confirmPassword"
                 placeholder="••••••••"
                 value={formData.confirmPassword}
+                autoComplete="new-password"
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-slate-200 focus:border-green-600 focus:ring-1 focus:ring-green-600 outline-none rounded"
                 required
